@@ -8,9 +8,8 @@ namespace SharpLesson
         public static float CalculateWinRate(List<bool> statisticList)
         {
             int battleCount = statisticList.Count;
-            bool win = true;
-            int winCount = statisticList.Where(x => win).Count();
-            return winCount / battleCount;
+            int winCount = statisticList.Where(x => x).Count();
+            return (float)winCount / battleCount;
         }
 
         public static int GetTotalMatchCount(List<bool> statisticList) => statisticList.Count;

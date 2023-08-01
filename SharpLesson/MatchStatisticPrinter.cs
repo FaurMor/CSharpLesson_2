@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 
 namespace SharpLesson
@@ -10,104 +12,81 @@ namespace SharpLesson
         public const string FavoriteHero = "Самый любимый герой:";
         public const string UnfavoriteHero = "Самый нелюбимый герой:";
         public const string WinstreakHero = "Герой с самым большим винстриком:";
+        public const string Match = "матчей";
+        public const string Win = "побед";
+        public const string Winstreak = "винстрик";
+        public const string Winrate = "винрейт";
 
         public MatchStatisticPrinter() { }
 
-        public string PrintSuccsessfulHero(Dictionary<Hero, float> winRateList)
-        {
-            string result = "";
-            var sortedWinrateList = SortMatchStatisticDecrease(winRateList);
-            float maxWinRate = 0;
-            foreach(var winRate in sortedWinrateList)
-            {
-                if (winRate.Value >= maxWinRate)
-                {
-                    maxWinRate = winRate.Value;
-                    result += $" {winRate.Key}";
-                    result += " " + string.Format("{0:0.00}",winRate.Value);
-                }
-                else { break; }
-            }
-            return result;
-        }
+        public string PrintSuccsessfulHero(Dictionary<Hero, float> winRateList) 
+            => PrintMaxMatchCount(SortMatchStatisticDecrease(winRateList), Winrate);
 
-        public string PrintUnsuccsessfulHero(Dictionary<Hero, float> winRateList)
-        {
-            string result = "";
-            var sortedWinrateList = SortMatchStatisticIncrease(winRateList);
-            float minWinRate = -1;
-            foreach (var winRate in sortedWinrateList)
-            {
-                if (winRate.Value <= minWinRate || minWinRate == -1)
-                {
-                    minWinRate = winRate.Value;
-                    result += $" {winRate.Key}";
-                    result += " " + string.Format("{0:0.00}", winRate.Value);
-                }
-                else { break; }
-            }
-            return result;
-        }
+        public string PrintUnsuccsessfulHero(Dictionary<Hero, float> winRateList) 
+            => PrintMinMatchCount(SortMatchStatisticIncrease(winRateList), Winrate);
+        
+        public string PrintFavoriteHero(Dictionary<Hero, float> matchCountList)
+            => PrintMaxMatchCount(SortMatchStatisticDecrease(matchCountList), Match);
 
-        public string PrintFavoriteHero(Dictionary<Hero, int> matchCountList)
-        {
-            string result = "";
-            var sortedMatchCountList = SortMatchStatisticDecrease(matchCountList);
-            int maxMatchCount = 0;
-            foreach(var matchCount in sortedMatchCountList)
-            {
-                if (matchCount.Value >= maxMatchCount)
-                {
-                    maxMatchCount = matchCount.Value;
-                    result += $" {matchCount.Key} ({matchCount.Value} матчей)";
-                }
-                else { break; }
-            }
-            return result;
-        }
+        public string PrintUnfavoriteHero(Dictionary<Hero, float> matchCountList)
+            => PrintMinMatchCount(SortMatchStatisticIncrease(matchCountList), Match);
 
-        public string PrintUnfavoriteHero(Dictionary<Hero, int> matchCountList)
+        public string PrintWinstreakHero(Dictionary<Hero, float> winstreakList)
+            => PrintMaxMatchCount(SortMatchStatisticDecrease(winstreakList), Winstreak);
+
+        private string PrintMaxMatchCount(Dictionary<Hero, float> sortedMatchList, string ivent)
         {
-            string result = "";
-            var sortedMatchCountList = SortMatchStatisticIncrease(matchCountList);
-            int minMatchCount = -1;
-            foreach (var matchCount in sortedMatchCountList)
+            string result = string.Empty;
+            float minMatchCount = 0;
+            foreach (var matchCount in sortedMatchList)
             {
-                if (matchCount.Value >= minMatchCount || minMatchCount == -1)
+                if (matchCount.Value >= minMatchCount)
                 {
                     minMatchCount = matchCount.Value;
-                    result += $" {matchCount.Key} ({matchCount.Value} матчей)";
+                    if (ivent == Winrate)
+                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent, true);
+                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent);
                 }
                 else { break; }
             }
             return result;
         }
 
-        public string PrintWinstreakHero(Dictionary<Hero, int> winstreakList)
+        private string PrintMinMatchCount(Dictionary<Hero, float> sortedMatchList, string ivent)
         {
-            string result = "";
-            var sortedWinstreakList = SortMatchStatisticDecrease(winstreakList);
-            int maxWinstreak = 0;
-            foreach (var winstreak in sortedWinstreakList)
+            string result = string.Empty;
+            float minMatchCount = -1;
+            foreach(var matchCount in sortedMatchList)
             {
-                if (winstreak.Value >= maxWinstreak)
+                if (matchCount.Value <= minMatchCount || minMatchCount == -1)
                 {
-                    maxWinstreak = winstreak.Value;
-                    result += $" {winstreak.Key} ({winstreak.Value} побед)";
+                    minMatchCount = matchCount.Value;
+                    if (ivent == Winrate)
+                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent, true);
+                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent);
                 }
                 else { break; }
             }
             return result;
         }
 
-        private Dictionary<Hero, int> SortMatchStatisticIncrease(Dictionary<Hero, int> statisticList) 
-            => statisticList.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        private string PrintMatchResult(string name, float value, string ivent, bool isFormat=false)
+        {
+            if (isFormat)
+            {
+                return $" {name} ({PrintWinrateFormat(value)} {ivent})";
+            }
+            else
+            {
+                return $" {name} ({value} {ivent})";
+            } 
+        }
+        
+        private string PrintWinrateFormat(float winrateValue) 
+            => string.Format("{0:0.00}", winrateValue);
 
         private Dictionary<Hero, float> SortMatchStatisticIncrease(Dictionary<Hero, float> statisticList)
             => statisticList.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-
-        private Dictionary<Hero, int> SortMatchStatisticDecrease(Dictionary<Hero, int> statisticList)
-            => statisticList.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
         private Dictionary<Hero, float> SortMatchStatisticDecrease(Dictionary<Hero, float> statisticList)
             => statisticList.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);

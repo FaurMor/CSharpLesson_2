@@ -14,6 +14,7 @@ namespace SharpLesson
             Console.WriteLine(MatchStatisticPrinter.UnfavoriteHero + printer.PrintUnfavoriteHero(collector.GetMatchCountStatistic()));
             Console.WriteLine(MatchStatisticPrinter.WinstreakHero + printer.PrintWinstreakHero(collector.GetWinstreakStatistic()));
 
+            Console.Read();
             return 0;
         }
     }

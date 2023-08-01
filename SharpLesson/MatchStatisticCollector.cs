@@ -7,13 +7,11 @@ namespace SharpLesson
     {
         private Dictionary<Hero, List<bool>> _statisticList;
         private Dictionary<Hero, float> _winRateStatistic;
-        private Dictionary<Hero, int> _matchCountStatistic;
-        private Dictionary<Hero, int> _winstreakStatistic;
+        private Dictionary<Hero, float> _matchCountStatistic;
+        private Dictionary<Hero, float> _winstreakStatistic;
 
         public MatchStatisticCollector(Dictionary<Hero, List<bool>> statisticList) 
-        {
-            _statisticList = statisticList;
-        }
+            => _statisticList = statisticList;
 
         public Dictionary<Hero, float> GetWinRateStatistic()
         {
@@ -26,9 +24,9 @@ namespace SharpLesson
             return _winRateStatistic;
         }
 
-        public Dictionary<Hero, int> GetMatchCountStatistic()
+        public Dictionary<Hero, float> GetMatchCountStatistic()
         {
-            _matchCountStatistic = new Dictionary<Hero, int>();
+            _matchCountStatistic = new Dictionary<Hero, float>();
             foreach(var statistic in _statisticList)
             {
                 int matchCount = MatchStatisticCounter.GetTotalMatchCount(statistic.Value);
@@ -37,9 +35,9 @@ namespace SharpLesson
             return _matchCountStatistic;
         }
 
-        public Dictionary<Hero, int> GetWinstreakStatistic()
+        public Dictionary<Hero, float> GetWinstreakStatistic()
         {
-            _winstreakStatistic = new Dictionary<Hero, int>();
+            _winstreakStatistic = new Dictionary<Hero, float>();
             foreach( var statistic in _statisticList)
             {
                 int winstreakCount = MatchStatisticCounter.CalculateWinStreak(statistic.Value);
