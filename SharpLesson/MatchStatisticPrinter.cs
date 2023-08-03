@@ -17,8 +17,6 @@ namespace SharpLesson
         public const string Winstreak = "винстрик";
         public const string Winrate = "винрейт";
 
-        public MatchStatisticPrinter() { }
-
         public string PrintSuccsessfulHero(Dictionary<Hero, float> winRateList) 
             => PrintMaxMatchCount(SortMatchStatisticDecrease(winRateList), Winrate);
 
@@ -34,7 +32,7 @@ namespace SharpLesson
         public string PrintWinstreakHero(Dictionary<Hero, float> winstreakList)
             => PrintMaxMatchCount(SortMatchStatisticDecrease(winstreakList), Winstreak);
 
-        private string PrintMaxMatchCount(Dictionary<Hero, float> sortedMatchList, string ivent)
+        private string PrintMaxMatchCount(Dictionary<Hero, float> sortedMatchList, string matchEvent)
         {
             string result = string.Empty;
             float minMatchCount = 0;
@@ -43,16 +41,16 @@ namespace SharpLesson
                 if (matchCount.Value >= minMatchCount)
                 {
                     minMatchCount = matchCount.Value;
-                    if (ivent == Winrate)
-                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent, true);
-                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent);
+                    if (matchEvent == Winrate)
+                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, matchEvent, true);
+                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, matchEvent);
                 }
                 else { break; }
             }
             return result;
         }
 
-        private string PrintMinMatchCount(Dictionary<Hero, float> sortedMatchList, string ivent)
+        private string PrintMinMatchCount(Dictionary<Hero, float> sortedMatchList, string matchEvent)
         {
             string result = string.Empty;
             float minMatchCount = -1;
@@ -61,24 +59,24 @@ namespace SharpLesson
                 if (matchCount.Value <= minMatchCount || minMatchCount == -1)
                 {
                     minMatchCount = matchCount.Value;
-                    if (ivent == Winrate)
-                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent, true);
-                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, ivent);
+                    if (matchEvent == Winrate)
+                        result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, matchEvent, true);
+                    else result += PrintMatchResult(matchCount.Key.Name, matchCount.Value, matchEvent);
                 }
                 else { break; }
             }
             return result;
         }
 
-        private string PrintMatchResult(string name, float value, string ivent, bool isFormat=false)
+        private string PrintMatchResult(string name, float value, string matchEvent, bool isFormat=false)
         {
             if (isFormat)
             {
-                return $" {name} ({PrintWinrateFormat(value)} {ivent})";
+                return $" {name} ({PrintWinrateFormat(value)} {matchEvent})";
             }
             else
             {
-                return $" {name} ({value} {ivent})";
+                return $" {name} ({value} {matchEvent})";
             } 
         }
         

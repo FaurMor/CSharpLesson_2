@@ -3,22 +3,29 @@ using System.Linq;
 
 namespace SharpLesson
 {
-    public static class MatchStatisticCounter
+    public class MatchStatisticCounter
     {
-        public static float CalculateWinRate(List<bool> statisticList)
+        private List<bool> _statisticList;
+
+        public MatchStatisticCounter(List<bool> statisticList)
         {
-            int battleCount = statisticList.Count;
-            int winCount = statisticList.Where(x => x).Count();
+            _statisticList = statisticList;
+        }
+
+        public float CalculateWinRate()
+        {
+            int battleCount = _statisticList.Count;
+            int winCount = _statisticList.Where(x => x).Count();
             return (float)winCount / battleCount;
         }
 
-        public static int GetTotalMatchCount(List<bool> statisticList) => statisticList.Count;
+        public int GetTotalMatchCount() => _statisticList.Count;
             
-        public static int CalculateWinStreak(List<bool> statisticList)
+        public int CalculateWinStreak()
         {
             int maxWinStreak = 0;
             int winStreak = 0;
-            foreach (var result in statisticList)
+            foreach (var result in _statisticList)
             {
                 if (result)
                 {
